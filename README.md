@@ -28,3 +28,7 @@
 ### 其他
 - [switchHosts](https://github.com/oldj/SwitchHosts/releases)
 - [持续集成服务 Travis CI](https://travis-ci.org/) [说明](http://www.ruanyifeng.com/blog/2017/12/travis_ci_tutorial.html)
+
+### 安全
+- sodan 搜索引擎
+- arduino leonardo 一个好玩的模拟输入端小板子
