@@ -45,6 +45,8 @@
     - iterable 内置 forEach方法 `a.forEach(function (element, index, array) {})`;
     - 使用forEach 中 修改array的值， 无法影响当前循环，但是影响循环结束时的值
 
+12. NaN:number true:boolean undefined:undefined null:object
+
 ### 函数
 - 函数的参数可以多于预定参数，也可以少于预定参数。多于则忽略，少于则受到undefined
 - arguments永远指向当前函数的调用者传入的所有参数。arguments类似Array但它不是一个Array
@@ -71,6 +73,23 @@
     - map()方法 `arr.map(String)`  为arr 中的所有项执行String()函数
     - reduce()方法 `[x1, x2, x3, x4].reduce(f) = f(f(f(x1, x2), x3), x4)` Array的reduce()把一个函数作用在这个Array的[x1, x2, x3...]上，这个函数必须接收两个参数，reduce()把结果继续和序列的下一个元素做累积计算
     - map()中的回调函数要求只有一个参数，否则会出现意料之外的错误
+    - filter() 筛选
+    - sort() 排序;  Array的sort()方法默认把所有元素先转换为String再排序;sort()可以传入自定义函数;sort()方法会直接对Array进行修改，它返回的结果仍是当前Array
+
+- 闭包  函数作为返回值：返回函数不要引用任何循环变量，或者后续会发生变化的变量 
+- 箭头函数: `x => x * x`
+- generator 
+
+### 标准对象
+
+- Date
+    
+    - Date对象月份值从0开始 0表示1月，1表示2月
+    - 创建正则匹配分两种  一种 会直接定义字符串 '/ABC/'; 另一种 new RegExp('ABC'); 注意 第二种存在转义字符的问题
+    - '/ABC/'.test('ABCDEFG'); 检查是否能够成功屁屁
+    
+    
+
 
 
 ## 书签
