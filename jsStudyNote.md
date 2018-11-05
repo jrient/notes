@@ -1,3 +1,8 @@
+
+[toc]
+
+---
+
 `这是一个PHPer学习javascript的笔记`
 
 ### 数据类型
@@ -81,16 +86,85 @@
 - generator 
 
 ### 标准对象
+- Date对象月份值从0开始 0表示1月，1表示2月
+- 创建正则匹配分两种  一种 会直接定义字符串 '/ABC/'; 另一种 new RegExp('ABC'); 注意 第二种存在转义字符的问题
+- (/ABC/).test('ABCDEFG'); 检查是否能够成功匹配
+- 'a b   c'.split(/\s+/); // ['a', 'b', 'c'] 正则分割
+- (/^(\d{3})-(\d{3,8})$/).exec('010-12345');
+- \d+采用贪婪匹配; \d+?采用非贪婪匹配
+- 全局搜索 var r = /test/g  或者  var r = new RegExp('test','g');
+- 全局匹配可以多次执行exec()方法来搜索一个匹配的字符串。当我们指定g标志后，每次运行exec()，正则表达式本身会更新lastIndex属性，表示上次匹配到的最后索引
+- json 序列化 JSON.stringify(value, null, ''); 第二个参数用于指定需要输出的属性 或 传入一个函数处理所有的键值对;
+- json 反序列化 JSON.parse(value); 其第二参数可以传入一个函数，用来处理解析出来的属性;
 
-- Date
+### 面向对象编程
+- JavaScript不区分类和实例的概念，而是通过原型（prototype）来实现面向对象编程
+- 每个对象都有 __proto__ 属性，但只有函数对象才有 prototype 属性
+- xiaoming.__proto__ = Student;    xiaoming 是一个用户对象    Student 是一个学生对象
+- Object.create()方法可以传入一个原型对象，并创建一个基于该原型的新对象
+- var arr = [1,2,3];  对象原型链 : `arr ----> Array.prototype ----> Object.prototype ----> null`
+- 构造函数 new {function() {}}
+- 创建的对象 会获得一个 constructor 属性，他指向原型本身
+- 一个常用的模式
+    ```
+    function Student(props) {
+        this.name = props.name || '匿名'; // 默认值为'匿名'
+        this.grade = props.grade || 1; // 默认值为1
+    }
     
-    - Date对象月份值从0开始 0表示1月，1表示2月
-    - 创建正则匹配分两种  一种 会直接定义字符串 '/ABC/'; 另一种 new RegExp('ABC'); 注意 第二种存在转义字符的问题
-    - '/ABC/'.test('ABCDEFG'); 检查是否能够成功屁屁
+    Student.prototype.hello = function () {
+        alert('Hello, ' + this.name + '!');
+    };
     
+    function createStudent(props) {
+        return new Student(props || {})
+    }
+    ```
+- inherits 原型继承封装函数
+- 使用 class 来声明类 extends 来继承类
+- 使用super(); 来调用父类的构造方法
+- [Babel](https://babeljs.io/) 一个把class代码转换为传统的prototype代码的工具
+
+### 浏览器
+- window; IE<=8不支持
+- navigator 对象表示浏览器的信息
+    - navigator.appName：浏览器名称；
+    - navigator.appVersion：浏览器版本；
+    - navigator.language：浏览器设置的语言；
+    - navigator.platform：操作系统类型；
+    - navigator.userAgent：浏览器设定的User-Agent字符串   
+- screen 对象表示屏幕的信息
+    - screen.width：屏幕宽度，以像素为单位；
+    - screen.height：屏幕高度，以像素为单位；
+    - screen.colorDepth：返回颜色位数，如8、16、24
+- location 当前页面的URL信息
+    - location.protocol; // 'http'
+    - location.host; // 'www.example.com'
+    - location.port; // '8080'
+    - location.pathname; // '/path/index.html'
+    - location.search; // '?a=1&b=2'
+    - location.hash; // 'TOP'
+- document 表示当前页面
+    - document.getElementById();
+    - ducument.getElementsByTagName();
+    - document.cookie;
+- history 浏览器的历史记录
+    - history.back();
+    - history.forward();
+    - 不建议使用history 这个对象
+- querySelector() querySelectorAll()
+
+#### 操作DOM
+- innerHTML innerText textContent;innerText不返回隐藏元素的文本，而textContent返回所有文本。另外注意IE<9不支持textContent
+- DOM节点的style属性对应所有的CSS，可以直接获取或设置。因为CSS允许font-size这样的名称，但它并非JavaScript有效的属性名，所以需要在JavaScript中改写为驼峰式命名fontSize
+- appendChild() 插入新元素
+- 插入的js节点已经存在于当前的文档树，因此这个节点首先会从原先的位置删除，再插入到新的位置
+- createElement(); 创建一个新的节点
+- insertBefore(newElement, referenceElement) 子节点会插入到referenceElement之前
+- 删除节点 var remove = parent.removeChild(self); 删除后的节点虽然不在文档树中了，但其实它还在内存中，可以随时再次被添加到别的位置。
+
+
+
     
-
-
-
-## 书签
+### 书签
 [filter](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/0014351219769203e3fbe1ed611475db3d439393add8997000)
