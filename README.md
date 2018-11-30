@@ -32,3 +32,7 @@
 ### 安全
 - sodan 搜索引擎
 - arduino leonardo 一个好玩的模拟输入端小板子
+
+### 其他 
+- 微信防撤回 https://www.xzymoe.com/wechat-anti-message-revoke/
+- firebase 代码托管
