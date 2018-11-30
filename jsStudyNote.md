@@ -162,9 +162,69 @@
 - createElement(); 创建一个新的节点
 - insertBefore(newElement, referenceElement) 子节点会插入到referenceElement之前
 - 删除节点 var remove = parent.removeChild(self); 删除后的节点虽然不在文档树中了，但其实它还在内存中，可以随时再次被添加到别的位置。
-
-
-
+- js处理文件上传的操作非常少，但是在html5中，提供了File和FileReader两个主要对象，可以获得文件信息并读取文件。
+- 现在浏览器上AJAx主要依赖XMLHttpRequest对象 低版本使用ActiveXObject对象
+- CORS (cross-origin resource sharing) 就目前html5主流的ajax方式。 先发送一个OPTIONS请求（称为preflighted请求）到目标域名，目标域名返回Access信息，然后由js判断是否可以继续执行。
+- 等待回调 new Promise(function(resolve, reject){if(1){resolve()} else {reject()}}).then(function(a){log('success')}).catch(function(b){log('fail)});
+- canvas 可以用JavaScript在上面绘制各种图表、动画等,(html5)
+    - getContext('2d')方法让我们拿到一个CanvasRenderingContext2D对象，所有的绘图操作都需要通过这个对象完成。
+    - getContext("webgl") 绘制3d图形
+    
+#### jQuery
+- jQuery 目前有1.x和2.x两个版本， 区别在于2.x不支持ie6/7/8
+- $() 选择器
+    - 连写是完全选择
+    - 用逗号分隔则是取并集
+    - 空格分隔是层级选择
+    - `>`分隔是子选择器，要求必须是父子关系
+    - :分隔 过滤器，通常附加在选择器上
+    - 表单相关的选择器 :input; :file; :checkbook; :radio; :focus; :checked; :disabled; :enabled;
+    - 其他 :visible; :hidden;等
+- 继续选择
+    - find(); 向下查找
+    - parent(); 向上查找
+    - next(); prev(); 同级查找
+    - filter(); 过滤 可以传入一函数 函数内部的this被绑定为DOM对象，不是jQuery对象；
+    - map(); 一个jQuery对象包含的若干DOM节点转化为其他对象
+    - 一个jQuery对象如果包含了不止一个DOM节点，first()、last()和slice()方法可以返回一个新的jQuery对象，把不需要的DOM节点去掉
+- 操作DOM
+    - text(); html(); 获取/设置文本或者html  可以被选择的一组节点的处理
+    - css(); 修改css样式
+    - 修改class: hasClass(); addClass(); removeClass();
+    - show(); hidden() 显示和隐藏
+    - width(); height();获取、设置宽高
+    - attr(); removeAttr(); 设置节点属性
+    - is(); 判断属性是否存在; prop(); 用于设置无值属性
+    - val(); 设置value属性
+    - append(); 添加节点到最后 可以使DOM节点、jQ对象、函数对象；prepend()添加到最前
+    - after(); before(); 将新节点插入指定节点之前、之后
+    - remove(); 删除节点
+- 事件
+    -  鼠标事件
+       click: 鼠标单击时触发；
+       dblclick：鼠标双击时触发；
+       mouseenter：鼠标进入时触发；
+       mouseleave：鼠标移出时触发；
+       mousemove：鼠标在DOM内部移动时触发；
+       hover：鼠标进入和退出时触发两个函数，相当于mouseenter加上mouseleave。
+    - 键盘事件
+       键盘事件仅作用在当前焦点的DOM上，通常是<input>和<textarea>。
+       keydown：键盘按下时触发；
+       keyup：键盘松开时触发；
+       keypress：按一次键后触发。
+    - 其他事件
+       focus：当DOM获得焦点时触发；
+       blur：当DOM失去焦点时触发；
+       change：当<input>、<select>或<textarea>的内容改变时触发；
+       submit：当<form>提交时触发；
+       ready：当页面被载入并且DOM树完成初始化后触发。仅作用于document对象,且只触发一次。用法 $(document).ready(function(){}) 简化 $(function () {// init...});
+    - on(); 绑定事件
+    - off(); 解绑事件； 注意不能解绑匿名函数。可以使用off('click')一次性移除已绑定的click事件的所有处理函数。无参数调用off()一次性移除已绑定的所有类型的事件处理函数。
+    - change(); 用户操作改变时触发，如文本框输入、下拉框改变..可以通过js代码手动触发
+    - 有些方法只有由用户触发才能执行。如 window.open();
+    
+    
+    
     
 ### 书签
-[filter](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/0014351219769203e3fbe1ed611475db3d439393add8997000)
+[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434500456006abd6381dc3bb439d932cb895b62d9eee000)
