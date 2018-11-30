@@ -217,11 +217,13 @@
        - blur：当DOM失去焦点时触发；
        - change：当<input>、<select>或<textarea>的内容改变时触发；
        - submit：当<form>提交时触发；
-       - ready：当页面被载入并且DOM树完成初始化后触发。仅作用于document对象,且只触发一次。用法 $(document).ready(function(){}) 简化 $(function () {// init...});
+       - ready：当页面被载入并且DOM树完成初始化后触发。仅作用于document对象,且只触发一次。用法 $(document).ready(function(){}) 简化 $(function () {// init...})
+    
     - on(); 绑定事件
     - off(); 解绑事件； 注意不能解绑匿名函数。可以使用off('click')一次性移除已绑定的click事件的所有处理函数。无参数调用off()一次性移除已绑定的所有类型的事件处理函数。
     - change(); 用户操作改变时触发，如文本框输入、下拉框改变..可以通过js代码手动触发
-    - 有些方法只有由用户触发才能执行。如 window.open();
+    - 有些方法只有由用户触发才能执行。如 window.open()
+    
     
     
     
