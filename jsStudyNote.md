@@ -208,23 +208,144 @@
        - mousemove：鼠标在DOM内部移动时触发；
        - hover：鼠标进入和退出时触发两个函数，相当于mouseenter加上mouseleave。
     - 键盘事件
-       - 键盘事件仅作用在当前焦点的DOM上，通常是<input>和<textarea>。
+       - 键盘事件仅作用在当前焦点的DOM上，通常是`<input>`和`<textarea>`。
        - keydown：键盘按下时触发；
        - keyup：键盘松开时触发；
        - keypress：按一次键后触发。
     - 其他事件
        - focus：当DOM获得焦点时触发；
        - blur：当DOM失去焦点时触发；
-       - change：当<input>、<select>或<textarea>的内容改变时触发；
+       - change：当`<input>`、`<select>`或`<textarea>`的内容改变时触发；
        - submit：当<form>提交时触发；
        - ready：当页面被载入并且DOM树完成初始化后触发。仅作用于document对象,且只触发一次。用法 $(document).ready(function(){}) 简化 $(function () {// init...});
     - on(); 绑定事件
     - off(); 解绑事件； 注意不能解绑匿名函数。可以使用off('click')一次性移除已绑定的click事件的所有处理函数。无参数调用off()一次性移除已绑定的所有类型的事件处理函数。
     - change(); 用户操作改变时触发，如文本框输入、下拉框改变..可以通过js代码手动触发
-    - 有些方法只有由用户触发才能执行。如 window.open();
-    
-    
-    
+    - 有些方法只有由用户触发才能执行。如 window.open()
+- 动画
+    - show(); hide(); toggle(); 参数是毫秒,但也可以是'slow'，'fast'这些字符串。在自定义的时间内显示、影藏、自适应显示影藏一个DOM元素;原点是左上角；
+    - slideUp();slideDown(); slideToggle(); 同上；原点是上边框；
+    - fadeIn(); fadeOut(); fadeToggle(); 同上；效果是逐渐消失、显示；
+    - animate(css,time,callbackFunction(){}); 自定义动画，jQuery在时间段内不断调整CSS直到达到我们设定的值；参数1为DOM最终的css样式
+    - delay(); 暂停一段时间
+- AJAX
+    ```
+        $.ajax('/test',{
+            async: true,        //是否异步执行AJAX请求，默认为true
+            method: 'POST',     //发送的Method，缺省为'GET'，可指定为'POST'、'PUT'等
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',    //发送POST请求的格式,可以指定为text/plain、application/json
+            data: data,         //发送的数据，可以是字符串、数组或object。如果是GET请求，data将被转换成query附加到URL上，如果是POST请求，根据contentType把data序列化成合适的格式
+            headers: {          //发送的额外的HTTP头
+                "header1" : 1,
+                "header2" : 2
+            },
+            jsonp: 'callback',
+            dataType: 'html'    //接收的数据格式，可以指定为'html'、'xml'、'json'、'text'等，缺省情况下根据响应的Content-Type自适应
+        });
+    ```
+    - 处理返回数据和出错
+        - done(function(){{})
+        - fail(function(){})
+        - always(functio(){})
+    - 辅助方法： 
+        - $.get(url, params);     params 默认被构造为query string
+        - $.post(url, postData);  postData默认被序列化为application/x-www-form-urlencoded
+        - $.getJSON(url, params).done(function(data){});            快速通过GET获取一个JSON对象  回传值被解析为json
+        
+- 扩展
+通过 $.fn 对象实现。
+$.fn.functionA = function() {
+    alert('functionA');
+    return this;
+}
+函数内部的this在调用时被绑定为jQuery对象，所以函数内部代码可以正常调用所有jQuery对象的方法
+要求自定义扩展函数内部return this;方便链式操作
+通过 $.extend(target, obj1, obj2, ...) 它把多个object对象的属性合并到第一个target对象中，遇到同名属性，总是使用靠后的对象的值，也就是越往后优先级越高
+编写jQuery插件的原则:
+    1. 给$.fn绑定函数，实现插件的代码逻辑；
+    2. 插件函数最后要return this;以支持链式调用；
+    3. 插件函数要有默认值，绑定在$.fn.<pluginName>.defaults上；
+    4. 用户在调用时可传入设定值以便覆盖默认值。
 
+#### 错误处理
+`try{}cache(e){}finally{}`
+当代码块被try { ... }包裹的时候，就表示这部分代码执行过程中可能会发生错误，一旦发生错误，就不再继续执行后续代码，转而跳到catch块。catch (e) { ... }包裹的代码就是错误处理代码，变量e表示捕获到的错误。最后，无论有没有错误，finally一定会被执行。
+JavaScript有一个标准的Error对象表示错误，还有从Error派生的TypeError、ReferenceError等错误对象。我们在处理错误时，可以通过catch(e)捕获的变量e访问错误对象
+throw new Error('error');程序也可以主动抛出一个错误，让执行流程直接跳转到catch块。抛出错误使用throw语句。
+如果在一个函数内部发生了错误，它自身没有捕获，错误就会被抛到外层调用函数，如果外层函数也没有捕获，该错误会一直沿着函数调用链向上抛出，直到被JavaScript引擎捕获，代码终止执行。
+try cache无法从外部捕获异步事件和事件驱动，如果需要进行错误捕获，则需要吧错误捕获加在事件里面。
+
+#### underscore
+underscore为集合类对象提供了一致的接口。集合类是指Array和Object，暂不支持Map和Set。
+
+- collections
+    和Array的map()与filter()类似，但是underscore的map()和filter()可以作用于Object。当作用于Object时，传入的函数为function (value, key)，第一个参数接收value，第二个参数接收key
+    _.map(); _.filter(); 返回数组   _.mapObject(); 返回对象
+    
+    当集合的所有元素都满足条件时，_.every(arr,function(key, value){return true|false})函数返回true，当集合的至少一个元素满足条件时，_.some(arr,function(key, value){return true|false})函数返回true
+    _.max(arr); _.min(arr); 直接返回集合中最大和最小的数
+    _.groupBy(arr,function(key))把集合的元素按照key归类，key由传入的函数返回
+    _.shuffle(arr)用洗牌算法随机打乱一个集合; _.sample(arr, n)则是随机选择一个或多个元素
+    [官方文档](http://underscorejs.org/#collections)
+- arrays
+    underscore为Array提供了许多工具类方法，可以更方便快捷地操作Array。
+    _.last(arr); _.first(arr); 分别取第一个和最后一个元素
+    _.flatten(arr); flatten()接收一个Array，无论这个Array里面嵌套了多少个Array，flatten()最后都把它们变成一个一维数组
+    _.zip(keyArr,valueArr); _.unzip(arr); zip()把两个或多个数组的所有元素按索引对齐，然后按索引合并成新数组。unzip()则是反过来。组合、拆分key、value
+    _.object(keyArr, valueArr); 和zip类似
+    _.range(max); _.range(start, max, offset); 快速生成一个序列 最大值小于max
+    [官方文档](http://underscorejs.org/#arrays)
+
+- functions
+    因为underscore本来就是为了充分发挥JavaScript的函数式编程特性，所以也提供了大量JavaScript本身没有的高阶函数。
+    - bind
+        var fn = _.bind(s.trim, s); 将s对象直接绑定在fn()的this指针上
+    - partial
+        partial()就是为一个函数创建偏函数。
+        假设我们要计算xy，这时只需要调用Math.pow(x, y)就可以了。
+        假设我们经常计算2y，每次都写Math.pow(2, y)就比较麻烦，如果创建一个新的函数能直接这样写pow2N(y)就好了，这个新函数pow2N(y)就是根据Math.pow(x, y)创建出来的偏函数，它固定住了原函数的第一个参数（始终为2）
+        var pow2N = _.partial(Math.pow, 2);     固定住第一个参数
+        var cube = _.partial(Math.pow, _, 3);   固定住第二个参数
+    - memoize
+        用memoize()就可以自动缓存函数计算的结果
+        var a = _.memoize(function(){});
+    - once
+        once()保证某个函数执行且仅执行一次
+        var register = _.once(function(){});
+    - delay
+        delay()可以让一个函数延迟执行，效果和setTimeout()是一样的
+        _.delay(alert, 2000);
+        var log = _.bind(console.log, console);
+        _.delay(log, 2000, 'Hello,', 'world!');
+    - [官方文档](http://underscorejs.org/#functions)
+    
+- object
+    和Array类似，underscore也提供了大量针对Object的函数。
+    - keys
+        keys()可以非常方便地返回一个object自身所有的key，但不包含从原型链继承下来的
+    - allKeys
+        allKeys()除了object自身的key，还包含从原型链继承下来的
+    - values
+        values()返回object自身但不包含原型链继承的所有值
+    - mapObject
+        mapObject()就是针对object的map版本
+    - invert
+        invert()把object的每个key-value来个交换，key变成value，value变成key
+    - extend
+        extend()把多个object的key-value合并到第一个object并返回
+    - extendOwn
+        extendOwn()和extend()类似，但获取属性时忽略从原型链继承下来的属性
+    - clone
+        如果我们要复制一个object对象，就可以用clone()方法，它会把原有对象的所有属性都复制到新的对象中
+        注意，clone()是“浅复制”。所谓“浅复制”就是说，两个对象相同的key所引用的value其实是同一对象,修改子对象会影响原对象
+    - isEqual
+        isEqual()对两个object进行深度比较，如果内容完全相同，则返回true
+    - [官方文档](http://underscorejs.org/#objects)
+        
+- chaining
+    _.chain()将函数包装成为链式。
+    因为每一步返回的都是包装对象，所以最后一步的结果需要调用value()获得最终结果。
+    var r = _.chain([1, 4, 9, 16, 25]).map(Math.sqrt).filter(x => x % 2 === 1).value();
+        
 #### 书签
-[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434500456006abd6381dc3bb439d932cb895b62d9eee000)
+[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501245426ad4b91f2b880464ba876a8e3043fc8ef000)
