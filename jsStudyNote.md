@@ -353,8 +353,4 @@ underscore为集合类对象提供了一致的接口。集合类是指Array和Ob
     var r = _.chain([1, 4, 9, 16, 25]).map(Math.sqrt).filter(x => x % 2 === 1).value();
         
 #### 书签
-<<<<<<< HEAD
 [链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501245426ad4b91f2b880464ba876a8e3043fc8ef000)
-=======
-[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434500456006abd6381dc3bb439d932cb895b62d9eee000)
->>>>>>> bc640b3783a6521d589c1ee6775a6ed9b72937fb
