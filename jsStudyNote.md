@@ -222,6 +222,7 @@
     - off(); 解绑事件； 注意不能解绑匿名函数。可以使用off('click')一次性移除已绑定的click事件的所有处理函数。无参数调用off()一次性移除已绑定的所有类型的事件处理函数。
     - change(); 用户操作改变时触发，如文本框输入、下拉框改变..可以通过js代码手动触发
     - 有些方法只有由用户触发才能执行。如 window.open()
+<<<<<<< HEAD
 - 动画
     - show(); hide(); toggle(); 参数是毫秒,但也可以是'slow'，'fast'这些字符串。在自定义的时间内显示、影藏、自适应显示影藏一个DOM元素;原点是左上角；
     - slideUp();slideDown(); slideToggle(); 同上；原点是上边框；
@@ -281,6 +282,10 @@ underscore为集合类对象提供了一致的接口。集合类是指Array和Ob
 - collections
     和Array的map()与filter()类似，但是underscore的map()和filter()可以作用于Object。当作用于Object时，传入的函数为function (value, key)，第一个参数接收value，第二个参数接收key
     _.map(); _.filter(); 返回数组   _.mapObject(); 返回对象
+=======
+    
+    
+>>>>>>> bc640b3783a6521d589c1ee6775a6ed9b72937fb
     
     当集合的所有元素都满足条件时，_.every(arr,function(key, value){return true|false})函数返回true，当集合的至少一个元素满足条件时，_.some(arr,function(key, value){return true|false})函数返回true
     _.max(arr); _.min(arr); 直接返回集合中最大和最小的数
@@ -348,4 +353,8 @@ underscore为集合类对象提供了一致的接口。集合类是指Array和Ob
     var r = _.chain([1, 4, 9, 16, 25]).map(Math.sqrt).filter(x => x % 2 === 1).value();
         
 #### 书签
+<<<<<<< HEAD
 [链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501245426ad4b91f2b880464ba876a8e3043fc8ef000)
+=======
+[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434500456006abd6381dc3bb439d932cb895b62d9eee000)
+>>>>>>> bc640b3783a6521d589c1ee6775a6ed9b72937fb
