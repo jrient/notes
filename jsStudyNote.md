@@ -464,11 +464,208 @@ underscore为集合类对象提供了一致的接口。集合类是指Array和Ob
                 });
             ```
             
-    - stream
-        - 流的特点是数据是有序的，而且必须依次读取，或者依次写入，不能像Array那样随机定位
+    - stream [文档](https://github.com/michaelliao/learn-javascript/tree/master/samples/node/stream)
+        流的特点是数据是有序的，而且必须依次读取，或者依次写入，不能像Array那样随机定位.
+        在Node.js中，流也是一个对象，我们只需要响应流的事件就可以了：data事件表示流的数据已经可以读取了，end事件表示这个流已经到末尾了，没有数据可以读取了，error事件表示出错了。
+        ```javascript
+            var fs = require('fs');
+            // 打开一个流:
+            var rs = fs.createReadStream('sample.txt', 'utf-8');
+            rs.on('data', function (chunk) {
+                console.log('DATA:')
+                console.log(chunk);
+            });
+            rs.on('end', function () {
+                console.log('END');
+            });
+            rs.on('error', function (err) {
+                console.log('ERROR: ' + err);
+            });
+        ```
+        要注意，data事件可能会有多次，每次传递的chunk是流的一部分数据.
         
+        要以流的形式写入文件，只需要不断调用write()方法，最后以end()结束。
+        ```javascript
+          var fs = require('fs');
+          var ws1 = fs.createWriteStream('output1.txt', 'utf-8');
+          ws1.write('使用Stream写入文本数据...\n');
+          ws1.write('END.');
+          ws1.end();
+          var ws2 = fs.createWriteStream('output2.txt');
+          ws2.write(new Buffer('使用Stream写入二进制数据...\n', 'utf-8'));
+          ws2.write(new Buffer('END.', 'utf-8'));
+          ws2.end();
+        ```
+        所有可以读取数据的流都继承自stream.Readable，所有可以写入的流都继承自stream.Writable。
+        
+        - pipe
+        就像可以把两个水管串成一个更长的水管一样，两个流也可以串起来。一个Readable流和一个Writable流串起来后，所有的数据自动从Readable流进入Writable流，这种操作叫pipe。
+        让我们用pipe()把一个文件流和另一个文件流串起来，这样源文件的所有数据就自动写入到目标文件里了，所以，这实际上是一个复制文件的程序
+        ```javascript
+          var fs = require('fs');
+          var rs = fs.createReadStream('sample.txt');
+          var ws = fs.createWriteStream('copied.txt');
+          rs.pipe(ws);
+        ```
+        默认情况下，当Readable流的数据读取完毕，end事件触发后，将自动关闭Writable流。如果我们不希望自动关闭Writable流，需要传入参数
+        `readable.pipe(writable, { end: false });`
+     
+    - http
+        要开发HTTP服务器程序，从头处理TCP连接，解析HTTP是不现实的。这些工作实际上已经由Node.js自带的http模块完成了。应用程序并不直接和HTTP协议打交道，而是操作http模块提供的request和response对象。
+        request对象封装了HTTP请求，我们调用request对象的属性和方法就可以拿到所有HTTP请求的信息；
+        response对象封装了HTTP响应，我们操作response对象的方法，就可以把HTTP响应返回给浏览器。
+        ```javascript
+          // 导入http模块:
+          var http = require('http');
+          // 创建http server，并传入回调函数:
+          var server = http.createServer(function (request, response) {
+              // 回调函数接收request和response对象,
+              // 获得HTTP请求的method和url:
+              console.log(request.method + ': ' + request.url);
+              // 将HTTP响应200写入response, 同时设置Content-Type: text/html:
+              response.writeHead(200, {'Content-Type': 'text/html'});
+              // 将HTTP响应的HTML内容写入response:
+              response.end('<h1>Hello world!</h1>');
+          });
+          // 让服务器监听8080端口:
+          server.listen(8080);
+          console.log('Server is running at http://127.0.0.1:8080/');
+        ```
+        [代码](https://github.com/michaelliao/learn-javascript/tree/master/samples/node/http)
+        
+    - crypto 
+        crypto模块的目的是为了提供通用的加密和哈希算法。用纯JavaScript代码实现这些功能不是不可能，但速度会非常慢。Nodejs用C/C++实现这些算法后，通过cypto这个模块暴露为JavaScript接口，这样用起来方便，运行速度也快。
+        - md5/sha1
+        ```javascript
+          const crypto = require('crypto');
+          const hash = crypto.createHash('md5');
+          hash.update('Hello, world!');
+          hash.update('Hello, nodejs!');
+          console.log(hash.digest('hex'))
+        ```
+        update()方法默认字符串编码为UTF-8，也可以传入Buffer。
+        如果要计算SHA1，只需要把'md5'改成'sha1'，就可以得到SHA1的结果1f32b9c9932c02227819a4151feed43e131aca40。
+        还可以使用更安全的sha256和sha512
+    - Hmac
+        Hmac算法也是一种哈希算法，它可以利用MD5或SHA1等哈希算法。不同的是，Hmac还需要一个密钥
+        只要密钥发生了变化，那么同样的输入数据也会得到不同的签名，因此，可以把Hmac理解为用随机数“增强”的哈希算法。
+        ```javascript
+          const crypto = require('crypto');
+          const hmac = crypto.createHmac('sha256', 'secret-key');
+          hmac.update('Hello, world!');
+          hmac.update('Hello, nodejs!');
+          console.log(hmac.digest('hex')); // 80f7e22570...
+        ```
+    - AES
+        AES是一种常用的对称加密算法，加解密都用同一个密钥。crypto模块提供了AES支持，但是需要自己封装好函数，便于使用
+        ```javascript
+          const crypto = require('crypto');
+          function aesEncrypt(data, key) {
+              const cipher = crypto.createCipher('aes192', key);
+              var crypted = cipher.update(data, 'utf8', 'hex');
+              crypted += cipher.final('hex');
+              return crypted;
+          }
+          function aesDecrypt(encrypted, key) {
+              const decipher = crypto.createDecipher('aes192', key);
+              var decrypted = decipher.update(encrypted, 'hex', 'utf8');
+              decrypted += decipher.final('utf8');
+              return decrypted;
+          }
+          var data = 'Hello, this is a secret message!';
+          var key = 'Password!';
+          var encrypted = aesEncrypt(data, key);
+          var decrypted = aesDecrypt(encrypted, key);
+          console.log('Plain text: ' + data);
+          //Plain text: Hello, this is a secret message!
+          console.log('Encrypted text: ' + encrypted);
+          //Encrypted text: 8a944d97bdabc157a5b7a40cb180e7...
+          console.log('Decrypted text: ' + decrypted);
+          //Decrypted text: Hello, this is a secret message!
+        ```
+        注意到AES有很多不同的算法，如aes192，aes-128-ecb，aes-256-cbc等，AES除了密钥外还可以指定IV（Initial Vector），不同的系统只要IV不同，用相同的密钥加密相同的数据得到的加密结果也是不同的。
+        加密结果通常有两种表示方法：hex和base64，这些功能Nodejs全部都支持，但是在应用中要注意，如果加解密双方一方用Nodejs，另一方用Java、PHP等其它语言，需要仔细测试。
+        如果无法正确解密，要确认双方是否遵循同样的AES算法，字符串密钥和IV是否相同，加密后的数据是否统一为hex或base64格式。
     
+    - Diffie-Hellman
+        DH算法是一种密钥交换协议，它可以让双方在不泄漏密钥的情况下协商出一个密钥来。
+        注意每次输出都不一样，因为素数的选择是随机的。
+        ```javascript
+          const crypto = require('crypto');
+          // xiaoming's keys:
+          var ming = crypto.createDiffieHellman(512);
+          var ming_keys = ming.generateKeys();
+          var prime = ming.getPrime();
+          var generator = ming.getGenerator();
+          console.log('Prime: ' + prime.toString('hex'));
+          //Prime: a8224c...deead3
+          console.log('Generator: ' + generator.toString('hex'));
+          //Generator: 02
+          
+          // xiaohong's keys:
+          var hong = crypto.createDiffieHellman(prime, generator);
+          var hong_keys = hong.generateKeys();
+          
+          // exchange and generate secret:
+          var ming_secret = ming.computeSecret(hong_keys);
+          var hong_secret = hong.computeSecret(ming_keys);
+          
+          // print secret:
+          console.log('Secret of Xiao Ming: ' + ming_secret.toString('hex'));
+          //Secret of Xiao Ming: 695308...d519be
+          console.log('Secret of Xiao Hong: ' + hong_secret.toString('hex'));
+          //Secret of Xiao Hong: 695308...d519be
+        ```
+    - RSA [参考源码](https://github.com/michaelliao/learn-javascript/tree/master/samples/node/crypto)
+        RSA算法是一种非对称加密算法，即由一个私钥和一个公钥构成的密钥对，通过私钥加密，公钥解密，或者通过公钥加密，私钥解密。其中，公钥可以公开，私钥必须保密。
+        RSA算法是1977年由Ron Rivest、Adi Shamir和Leonard Adleman共同提出的，所以以他们三人的姓氏的头字母命名。
+        首先，在命令行执行以下命令以生成一个RSA密钥对
+        `openssl genrsa -aes256 -out rsa-key.pem 2048`
+        根据提示输入密码，这个密码是用来加密RSA密钥的，加密方式指定为AES256，生成的RSA的密钥长度是2048位。执行成功后，我们获得了加密的rsa-key.pem文件。
+        第二步，通过上面的rsa-key.pem加密文件，我们可以导出原始的私钥.
+        `openssl rsa -in rsa-key.pem -outform PEM -out rsa-prv.pem`
+        输入第一步的密码，我们获得了解密后的私钥。
+        类似的，我们用下面的命令导出原始的公钥
+        `openssl rsa -in rsa-key.pem -outform PEM -pubout -out rsa-pub.pem`
+        这样，我们就准备好了原始私钥文件rsa-prv.pem和原始公钥文件rsa-pub.pem，编码格式均为PEM。
+        下面，使用crypto模块提供的方法，即可实现非对称加解密。
+        首先，我们用私钥加密，公钥解密：
+        ```javascript
+          const
+              fs = require('fs'),
+              crypto = require('crypto');
+          // 从文件加载key:
+          function loadKey(file) {
+              // key实际上就是PEM编码的字符串:
+              return fs.readFileSync(file, 'utf8');
+          }
+          let
+              prvKey = loadKey('./rsa-prv.pem'),
+              pubKey = loadKey('./rsa-pub.pem'),
+              message = 'Hello, world!';
+          // 使用私钥加密:
+          let enc_by_prv = crypto.privateEncrypt(prvKey, Buffer.from(message, 'utf8'));
+          console.log('encrypted by private key: ' + enc_by_prv.toString('hex'));
+          let dec_by_pub = crypto.publicDecrypt(pubKey, enc_by_prv);
+          console.log('decrypted by public key: ' + dec_by_pub.toString('utf8'));
+        ```
+        执行后，可以得到解密后的消息，与原始消息相同。
+        接下来我们使用公钥加密，私钥解密
+        ```javascript
+          // 使用公钥加密:
+          let enc_by_pub = crypto.publicEncrypt(pubKey, Buffer.from(message, 'utf8'));
+          console.log('encrypted by public key: ' + enc_by_pub.toString('hex'));
+          // 使用私钥解密:
+          let dec_by_prv = crypto.privateDecrypt(prvKey, enc_by_pub);
+          console.log('decrypted by private key: ' + dec_by_prv.toString('utf8'));
+        ```
+        执行得到的解密后的消息仍与原始消息相同。
+        如果我们把message字符串的长度增加到很长，例如1M，这时，执行RSA加密会得到一个类似这样的错误：data too large for key size，这是因为RSA加密的原始信息必须小于Key的长度。
+        那如何用RSA加密一个很长的消息呢？实际上，RSA并不适合加密大数据，而是先生成一个随机的AES密码，用AES加密原始信息，然后用RSA加密AES口令，这样，实际使用RSA时，给对方传的密文分两部分，一部分是AES加密的密文，另一部分是RSA加密的AES口令。
+        对方用RSA先解密出AES口令，再用AES解密密文，即可获得明文。
     
-    
+    - 证书
+        crypto模块也可以处理数字证书。数字证书通常用在SSL连接，也就是Web的https连接。一般情况下，https连接只需要处理服务器端的单向认证，如无特殊需求（例如自己作为Root给客户发认证证书），建议用反向代理服务器如Nginx等Web服务器去处理证书。
+        
 #### 书签
-[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501245426ad4b91f2b880464ba876a8e3043fc8ef000)
+[链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501549492cdf5d4013db14fa9ad8ca172f0664345000)
