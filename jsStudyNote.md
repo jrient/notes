@@ -351,6 +351,124 @@ underscore为集合类对象提供了一致的接口。集合类是指Array和Ob
     _.chain()将函数包装成为链式。
     因为每一步返回的都是包装对象，所以最后一步的结果需要调用value()获得最终结果。
     var r = _.chain([1, 4, 9, 16, 25]).map(Math.sqrt).filter(x => x % 2 === 1).value();
+
+#### node.js
+ - 安装 `yum -y install nodejs npm --enablerepo=epel`
+ - 执行
+    - `> node test.js`
+    - `> node`
+       `> console.log('hello world');`
+ - IDE
+    - [sublime text](http://www.imooc.com/learn/40)
+    - [VSCode](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001470969077294a6455fc9cd1f48b69f82cd05e7fa9b40000)
+ - 模块
+    为了编写可维护的代码，我们把很多函数分组，分别放到不同的文件里，这样，每个文件包含的代码就相对较少，很多编程语言都采用这种组织代码的方式。在Node环境中，一个.js文件就称之为一个模块（module）。
+    最大的好处是大大提高了代码的可维护性。其次，编写代码不必从零开始。当一个模块编写完毕，就可以被其他地方引用。我们在编写程序的时候，也经常引用其他模块，包括Node内置的模块和来自第三方的模块。
+    使用模块还可以避免函数名和变量名冲突。相同名字的函数和变量完全可以分别存在不同的模块中，因此，我们自己在编写模块时，不必考虑名字会与其他模块冲突。
+    ``` hello.js
+        'use strict';
+        var s = 'Hello';
+        function greet(name) {
+            console.log(s + ', ' + name + '!');
+        }
+        module.exports = greet;
+    ```
+    `module.exports = greet;`   把函数greet作为模块的输出暴露出去，这样其他模块就可以使用greet函数了
+    
+    ``` main.js
+        'use strict';
+        var greet = require('./hello'); // 引入hello模块:
+        var s = 'Michael';
+        greet(s); // Hello, Michael!
+    ```
+    `var greet = require('./hello');` require() 函数将引入的模块作为变量保存在greet变量中
+    其实变量greet就是在hello.js中我们用module.exports = greet;输出的greet函数。所以，main.js就成功地引用了hello.js模块中定义的greet()函数，接下来就可以直接使用它了
+    
+    这种模块加载机制被称为CommonJS规范。在这个规范下，每个.js文件都是一个模块，它们内部各自使用的变量名和函数名都互不冲突，例如，hello.js和main.js都申明了全局变量var s = 'xxx'，但互不影响。
+    一个模块想要对外暴露变量（函数也是变量），可以用module.exports = variable;，一个模块要引用其他模块暴露的变量，用var ref = require('module_name');就拿到了引用模块的变量。
+    
+    [module原理](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434502419592fd80bbb0613a42118ccab9435af408fd000)
+    如果要输出一个键值对象{}，可以利用exports这个已存在的空对象{}，并继续在上面添加新的键值；
+    如果要输出一个函数或数组，必须直接对module.exports对象赋值。
+    
+ - 基本模块
+    - global   node.js 唯一的全局对象
+    - process 代表当前node.js进程
+        - process.nextTick(function(){}) 等待下次事件执行后调用
+        - process.on('exit', function(){}) 可以在程序退出的时候执行函数
+    - 判断JavaScript执行环境
+        ```
+            if (typeof(window) === 'undefined') {
+                console.log('node.js');
+            } else {
+                console.log('browser');
+            }
+        ```
+    - fs  文件系统模块
+        fs模块同时提供了异步和同步的方法。
+        - 异步读
+            ```
+                'use strict';
+                var fs = require('fs');
+                fs.readFile('sample.txt', 'utf-8', function (err, data) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log(data);
+                    }
+                });
+            ```
+            当读取二进制文件时，不传入文件编码时，回调函数的data参数将返回一个Buffer对象。Buffer对象可以和String作转换。
+            ```
+                // Buffer -> String
+                var text = data.toString('utf-8');
+                // String -> Buffer
+                var buf = Buffer.from(text, 'utf-8');
+            ```
+        - 同步读
+            ```
+                var fs = require('fs');
+                var data = fs.readFileSync('sample.txt', 'utf-8');
+                console.log(data);
+            ```
         
+        - 写文件
+            fs.writeFile(fileName, content, callbackFunc(err));  异步写
+            writeFile()的参数依次为文件名、数据和回调函数。如果传入的数据是String，默认按UTF-8编码写入文本文件，如果传入的参数是Buffer，则写入的是二进制文件。回调函数由于只关心成功与否，因此只需要一个err参数。
+            fs.writeFileSync(fileName, content); 异步读
+            
+        - stat [文档](https://github.com/michaelliao/learn-javascript/tree/master/samples/node/fs)
+            如果我们要获取文件大小，创建时间等信息，可以使用fs.stat()，它返回一个Stat对象，能告诉我们文件或目录的详细信息
+            stat();同步
+            statSync(): 异步
+            ```
+                'use strict';
+                var fs = require('fs');
+                fs.stat('sample.txt', function (err, stat) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        // 是否是文件: isFile: true
+                        console.log('isFile: ' + stat.isFile());
+                        // 是否是目录:   isDirectory: false
+                        console.log('isDirectory: ' + stat.isDirectory());
+                        if (stat.isFile()) {
+                            // 文件大小:    size: 181
+                            console.log('size: ' + stat.size);
+                            // 创建时间, Date对象:    birth time: Fri Dec 11 2015 09:43:41 GMT+0800 (CST)
+                            console.log('birth time: ' + stat.birthtime);
+                            // 修改时间, Date对象:    modified time: Fri Dec 11 2015 12:09:00 GMT+0800 (CST)
+                            console.log('modified time: ' + stat.mtime);
+                        }
+                    }
+                });
+            ```
+            
+    - stream
+        - 流的特点是数据是有序的，而且必须依次读取，或者依次写入，不能像Array那样随机定位
+        
+    
+    
+    
 #### 书签
 [链接](https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/001434501245426ad4b91f2b880464ba876a8e3043fc8ef000)
