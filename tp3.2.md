@@ -2,6 +2,7 @@ TP3.2源码 - 红薯版
 
 ## 配置
 
+| 配置项 | 值 | 说明 |
 | :- | :-: | :-: | 
 | APP_DEBUG | true/false | 调试模式 |
 | BUILD_DIR_SECURE | true/false | 生成安全文件 |
