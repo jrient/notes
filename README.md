@@ -12,6 +12,7 @@
 - set Character Encoding
 - JSON Formatter / 极简Json格式化
 - [vimium](http://vimium.github.io/) 一个超级舒服的浏览器插件，和鼠标say byebye
+- [The Great Suspender](https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg?hl=zh-CN) 冻结暂时用不到的分页，达到系统资源释放。解决chrome占用内存过大的问题
 
 ### PHP
 - phpStorm
