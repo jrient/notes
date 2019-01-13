@@ -59,7 +59,7 @@
     - mb_parse_str() - with one arg
     - parse_str() - with one arg
 - 无效的class、interface、trait 名 (系统占用的关键字)
-    - viod
+    - void
     - iterable
 - 字符串转换支持科学表示法
 - 修正mt_rand()算法
