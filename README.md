@@ -16,6 +16,7 @@
 
 ### PHP
 - phpStorm
+- phpStorm [主题预览](http://daylerees.github.io/) [主题下载](https://github.com/daylerees/colour-schemes)
 
 ### 远程连接
 - [xShell\xFtp](https://www.netsarang.com/download/software.html)
