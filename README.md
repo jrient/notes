@@ -26,6 +26,7 @@
 
 ### Web在线工具
 - [一个好用的图片尺寸放大工具](http://waifu2x.udp.jp/)
+- [一个图片放大的工具](http://bigjpg.com/)
 
 ### 其他
 - [switchHosts](https://github.com/oldj/SwitchHosts/releases)
