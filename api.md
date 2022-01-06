@@ -4,16 +4,16 @@
 
 参数：
 
-| -- | -- | -- |
 |参数 | 类型 | 说明 |
+| -- | -- | -- |
 | data | string | 数据 推荐ABC-abc-1234格式|
 | code | string | 条码类型Code128 |
 | base64 | bool | 是否base64,请填true|
 
 条码类型 
 
-| -- | -- |
 | 值 | 说明 |
+| -- | -- |
 | Code128 | 推荐 |
 | Code11 | |
 | Code25IL | Code2of5 Interleaved |
