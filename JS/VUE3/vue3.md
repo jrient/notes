@@ -88,8 +88,8 @@ setup在beforeCreate之前执行一次，this是undefined
 
 ### computed
 
-与vue2中的配置功能一样
-写法
+与vue2中的配置功能一样，写法:
+
 ```javascript
 import {computed} from 'vue'
 setup(){
@@ -110,7 +110,9 @@ setup(){
 ```
 
 ## watch
+
 用法：与vue2中一致
+
 问题：
     1. 监视reactive定义的响应式数据时，oldvalue无法获取正确的值
     2. 监视reactive定义的响应式数据时，默认开启深度监视(deep配置失效)；
@@ -149,10 +151,13 @@ watch([()=>data.name,()=>data.age], (newValue, oldValue) => {
 ```
 
 ## watchEffect
+
 功能：不指明监视的属性，回调中用到了哪个属性就监视哪个属性
+
 watchEffect和computed有些类似：
-    - computed注重的是计算出来的值，所以必须要写返回值
-    - watchEffect注重的是过程，不需要写返回值
+  - computed注重的是计算出来的值，所以必须要写返回值
+  - watchEffect注重的是过程，不需要写返回值
+
 ```javascript
 //watchEffect所指定的回调中的数据只要发生了变化，则直接重新执行回调
 watchEffect(()=>{
@@ -164,18 +169,52 @@ watchEffect(()=>{
 ```
 
 ## 生命周期钩子
+
 与vue2对比如下
 
-beforeCreate => setup()
-created      => setup()
-beforeMount  => onMount
-mounted      => onMounted
-beforeUpdate => onUpdate
-updated      => onUpdated
-beforeDistory=> onUnmount
-distoryed    => onUnmounted
+> beforeCreate => setup()
+> created      => setup()
+> beforeMount  => onMount
+> mounted      => onMounted
+> beforeUpdate => onUpdate
+> updated      => onUpdated
+> beforeDistory=> onUnmount
+> distoryed    => onUnmounted
 
 ## hook
+
 hook的本质是一个函数，把setup函数中使用到的composition api进行封装
+
 类似于vue2中的mixin
+
 优势：复用代码，让setup中的逻辑更清晰
+
+## toRef/toRefs
+
+### toRef
+
+- 作用: 创建一个ref对象，其value只想另一个对象中的某个属性
+- 语法： `const name = toRef(person, 'name')`
+- 应用: 要将响应式对象中的某个属性单独提供给外部使用
+  
+### toRefs
+
+- 作用:批量创建多个ref对象
+- 语法: `const xxx = toRefs(person)`
+- 坑: person中的多级对象不能直接被提供给外部，如：
+
+```javascript
+let person = reactive({
+    name: 'wang',
+    info: {
+        addr: {
+            city: 'beijin'
+        }
+    }
+})
+const toRefsPerson = toRefs(person)
+return {
+    // city将是一个undefined
+    city: toRefsPerson.info.addr.city
+}
+```
