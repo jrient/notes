@@ -1,8 +1,5 @@
 # vue3
 
-[toc]
-
----
 ## 安装
 
 > vue create xxx
@@ -17,43 +14,27 @@ createApp(App).mount('#app')
 ```
 
 ## 配置项
-
 所有的data/methods/computed等，都放在setup中
-
 兼容vue2写法，不建议混写
-
 vue2/3配置同时出现，3优先
-
 setup不能是个async函数，因为返回值不再是一个return的对象，而是一个promise
 
 ## ref函数
-
 ref函数用来定义一个响应式的数据
-
 语法：
-
 > const xxx = ref(val)
-
 js中操作数据使用 xxx.value
-
 模板中使用 直接 {{xxx}}
 
 接受的数据可以是：基本类型、对象类型
-
 基本类型的数据：响应式依然是靠Object.defineProperty()实现
-
 对象类型的数据：内部求助vue3中的reactive函数
 
 ## reactive函数
-
 reactive函数用来定义对象类型的响应式数，基本类型用ref
-
 语法：
-
 > const xxx = reactive({}),返回一个代理对象(proxy对象)
-
 reactive定义的响应式是深层次的
-
 内部基于ES6的Proxy实现，通过代理对象操作源对象内部数据
 
 ## 响应式原理
@@ -66,18 +47,15 @@ reactive定义的响应式是深层次的
 - 数组类型：通过重写更新数组的一系列方法来实现拦截
 
 #### 存在问题
-
 - 新增属性、删除属性，界面不会更新
 - 直接通过下标修改数组，界面不会自动更新
 
 ### vue3
 
 #### 实现原理
-
 - 通过Proxy(代理)：拦截对象中任意属性的变化，包括读写添加修改
 - 通过Reflect(反射)：对被代理对象的属性经行操作
 - VUE3实现的简单案例
-
 ```javascript
 new Proxy(data, {
     //拦截
@@ -96,7 +74,6 @@ new Proxy(data, {
 ## setup的注意点
 
 ### 执行时间
-
 setup在beforeCreate之前执行一次，this是undefined
 
 ### setup的参数
@@ -137,8 +114,9 @@ setup(){
 用法：与vue2中一致
 
 问题：
-1. 监视reactive定义的响应式数据时，oldvalue无法获取正确的值
-2. 监视reactive定义的响应式数据时，默认开启深度监视(deep配置失效)；监视reatvice定义的响应式数据中的某个属性时，deep有效
+    1. 监视reactive定义的响应式数据时，oldvalue无法获取正确的值
+    2. 监视reactive定义的响应式数据时，默认开启深度监视(deep配置失效)；
+       监视reatvice定义的响应式数据中的某个属性时，depp有效
 
 ```javascript
 //监视ref定义的单个响应式数据
@@ -240,3 +218,78 @@ return {
     city: toRefsPerson.info.addr.city
 }
 ```
+
+## 其他Composition API
+
+### shallowRef 和 shallowReactive
+
+- 功能：只处理对象最外层的响应式(浅响应式)
+- 使用情况：
+  - 如果有一个对象数据，数据结构比较深，单变化的只是外城属性
+  - 如果有一个对象数据，后续功能不会修改该对象中的属性，直接拿一个新的对象来替换
+
+### readonly 和 shallowReadonly
+
+- 功能：不允许数据修改
+
+### toRaw 和 markRaw
+
+- toRaw
+  - 功能：将响应式数据恢复成原始数据
+  - toRaw 只能处理reactive生成的响应式对象，无法处理ref生成的对象
+  - 用途：用于读取响应式对象对应普通对象，对这个普通对象的所有操作都不会引起页面的更新
+- markRow
+  - 功能：标记一个对象，使其永远不再成为响应式对象
+  - 用途：
+    - 有些值不应被设置为响应式，如复杂的第三方库
+    - 当渲染具有不可变数据源的大列表时，跳过响应式转换可以提高性能
+  
+### customRef
+
+- 功能：创建一个自定义的ref，并对其以来项跟踪和更新触发进行显示控制
+- 用法：
+
+```javascript
+function xxx(value) {
+  return customRef((track, trigger) => {
+    return {
+      get(){
+        track()
+        return value
+      },
+      set(newValue){
+        value = newValue
+        trigger()
+      }
+    }
+  })
+}
+
+```
+
+### provide 和 inject
+
+- 用法： 实现祖/后代组件通信
+- 祖组件使用provide来提供数据，后代组件通过inject来获取数据
+- 用法：
+  1. 祖组件中
+```javascript
+  setup(){
+    let person = reactive({name:'aaa'})
+    provide('person', person)
+  }
+```
+
+  2. 后代组件中
+```javascript
+  setup(){
+    const person = inject('person')
+  }
+```
+
+#### 响应式数据的判断
+
+- isRef: 检查一个值是否是一个ref对象
+- isReactive: 检查一个对象是否是一个reactive对象
+- isReadonly: 检查一个对象是否是readonly对象
+- isProxy: 检查一个对象是否是由reacive或者readonly创建的proxy对象
