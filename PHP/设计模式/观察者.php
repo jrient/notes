@@ -18,7 +18,7 @@ class User implements SplSubject
         $randHobbt = rand(0,1);
         $this->hobby = ['study', 'sport'][$randHobbt];
 
-        $this->notify(); 
+        $this->notify();
     }
 
     public function attach(SplObserver $observer): void
@@ -41,6 +41,7 @@ class User implements SplSubject
             $observer->update($this);
             $this->observers->next();
         }
+
     }
 
 }
