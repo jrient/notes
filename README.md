@@ -45,3 +45,6 @@
 - [synergy](https://symless.com/synergy) 一个多主机共享键鼠工具
 - 视频播放器[potplayer](https://daumpotplayer.com/download/)
 - test1
+
+
+[![IceEnd's GitHub stats](https://github-immortality.vercel.app/api?username=jrient)](https://github.com/IceEnd)
